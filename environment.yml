@@ -1,0 +1,14 @@
+name: pybio
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - python=3.11
+  - pandas
+  - numpy
+  - scipy
+  - statsmodels
+  - matplotlib
+  - seaborn
+  - biopython
+  - jupyterlab

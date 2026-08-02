@@ -1,0 +1,8 @@
+*.txt.gz
+*.txt
+GPL96*
+GSE*
+.ipynb_checkpoints/
+__pycache__/
+*.pyc
+.DS_Store
