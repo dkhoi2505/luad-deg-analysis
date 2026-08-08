@@ -54,6 +54,111 @@ The mitotic cell-cycle genes *NEK2*, *TTK*, and *PRC1* - the headline signature 
 
 ![Volcano plot](figures/volcano_gene_level.png)
 
+### Extension: antigen presentation and the neoantigen question
+ 
+Building on the macrophage-infiltration observation above, this extension asks a focused,
+hypothesis-driven question in tumor immunology: **is the MHC class I antigen-presentation
+machinery — the pathway that displays tumor neoantigens to CD8+ T cells — transcriptionally
+altered in these tumors?** Loss of this machinery is a canonical route of immune escape, so
+it is a natural thing to check. The analysis is a *targeted readout of a fixed gene panel*
+([`antigen_presentation.ipynb`](notebooks/antigen_presentation.ipynb)), not a discovery
+screen, and it deliberately includes immune-infiltrate reference genes so that any signal
+in the panel can be interpreted against tissue composition (bulk tissue mixes tumor, stroma
+and immune cells, and immune cells themselves express high MHC-I).
+ 
+**Panel readout** (representative probe per gene; thresholds identical to the main analysis:
+`FDR < 0.001` **and** `|log2FC| > 0.585`, i.e. fold change > 1.5x).
+ 
+| Gene  | Module              | log2FC | p_adj  | Passes threshold?                   |
+|-------|---------------------|-------:|-------:|-------------------------------------|
+| HLA-A | MHC-I heavy chain   | -0.07  | 0.38   | no                                  |
+| HLA-B | MHC-I heavy chain   | -0.16  | 0.053  | no                                  |
+| HLA-C | MHC-I heavy chain   | -0.17  | 2.0e-3 | no                                  |
+| B2M   | MHC-I light chain   | -0.20  | 3.6e-4 | no (passes FDR, fails effect size)  |
+| TAP1  | Peptide transport   | +0.18  | 0.22   | no                                  |
+| TAP2  | Peptide transport   | +0.17  | 0.037  | no                                  |
+| TAPBP | Peptide loading     | +0.10  | 0.31   | no                                  |
+| PSMB8 | Immunoproteasome    | +0.25  | 0.028  | no                                  |
+| PSMB9 | Immunoproteasome    | +0.04  | 0.83   | no                                  |
+| IRF1  | IFN-γ regulator     | -0.54  | 1.5e-5 | no (passes FDR, fails effect size)  |
+| STAT1 | IFN-γ regulator     | +0.51  | 4.1e-5 | no (passes FDR, fails effect size)  |
+ 
+Two genes could not be assessed: **NLRC5** (the master transcriptional activator of MHC-I)
+and **CD68** (a macrophage marker) are not annotated on HG-U133A / were dropped during
+gene-level collapse — NLRC5's MHC-I role was characterised (~2010) after this 2003 platform
+was designed.
+ 
+**No coordinated change of the presentation module.** None of the eleven measurable panel
+genes clears the significance threshold. The strongest evidence that nothing coordinated is
+happening is *per gene*: **every measurable gene has |log2FC| < 0.585** — no gene reaches the
+1.5x effect-size bar, regardless of its p-value. Consistent with this, the panel does not
+shift as a group (mean log2FC +0.01, median +0.04; 6 up, 5 down; a sign test does not reject
+a 50/50 split, p = 1.0 — though with only eleven genes this test has low power and is a
+secondary check, not the primary evidence). The two genes with the strongest *statistical*
+signal are the interferon-γ transcription factors — **STAT1** (+0.51, p_adj 4e-5) and **IRF1**
+(-0.54, p_adj 2e-5) — but both fall just short of the effect-size bar and, tellingly, move in
+**opposite** directions rather than as a coordinated interferon program; the IFN-inducible
+immunoproteasome subunits (PSMB8/PSMB9) are only trivially up. **B2M** reaches FDR
+significance but with a negligible effect (-0.20). At the bulk-tissue level there is **no
+evidence of MHC-I down-regulation** in this cohort.
+ 
+(Note that "mean ≈ 0" alone would be a weak claim — large opposite-sign effects can average
+to zero. What licenses "no meaningful change" is the *per-gene* result that no single
+|log2FC| approaches the threshold.)
+ 
+**Reference genes** (immune infiltrate / tissue composition — *not* part of the presentation
+panel; included only to interpret it).
+ 
+| Gene       | Role                          | log2FC | p_adj   | Reading                          |
+|------------|-------------------------------|-------:|--------:|----------------------------------|
+| CD8A       | Cytotoxic T cells             | -0.04  | 0.70    | flat (n.s.) — no CTL enrichment  |
+| PTPRC/CD45 | Pan-leukocyte                 | -0.66  | 1.4e-4  | lower — total leukocytes diluted |
+| SPP1       | Macrophage / TAM (proxy)      | +4.36  | 1.2e-35 | strongly up                      |
+| MMP12      | Macrophage (proxy)            | +2.38  | 2.6e-18 | strongly up                      |
+| MMP1       | Invasion / macrophage (proxy) | +2.86  | 1.7e-14 | strongly up                      |
+ 
+(CD68, the canonical macrophage marker, is not on this platform — hence the SPP1/MMP proxy.)
+ 
+**Reading against immune infiltrate.** The reference genes argue against dismissing the flat
+panel as an infiltration artifact. The pan-leukocyte marker **PTPRC/CD45 is lower in tumor**
+(-0.66, p_adj 1e-4) and the cytotoxic-T-cell marker **CD8A is flat** (-0.04, n.s.), so the
+presentation panel is not being propped up by lymphocytic infiltration (which would *raise*
+HLA/B2M). The lower PTPRC is best read as composition, not "less immune activity": normal
+lung is leukocyte-rich, and tumor tissue dilutes that resident population as tumor cells take
+up volume. Meanwhile the macrophage-associated genes from the main analysis are strongly up
+(**SPP1 +4.36, MMP12 +2.38, MMP1 +2.86**; a proxy, since bulk data cannot prove which cells
+express them). The coherent reading is a **shift in immune composition** — loss of the
+leukocyte-rich normal-lung milieu, gain of a specific pro-tumor macrophage program — rather
+than a T-cell-inflamed, interferon-high state. This is consistent with, and extends, the
+macrophage-infiltration observation noted earlier.
+ 
+**Interpretation through the neoantigen / CD8 lens.** That the presentation machinery is
+transcriptionally intact means there is no evidence, at the tissue level, that these tumors
+have silenced their *capacity* to present neoantigens — a genuinely informative negative. But
+it must be read with three hard limits, each of which is a reason bulk expression is the wrong
+tool for the neoantigen-presentation question:
+ 
+- **Bulk != tumor-cell-specific.** Stromal and immune cells express high MHC-I; a tumor-cell-
+  intrinsic HLA loss can be entirely masked in bulk by MHC-I-high non-tumor cells. "Bulk MHC-I
+  preserved" therefore does **not** establish that tumor cells present neoantigens.
+- **mRNA != surface protein or function.** The dominant real-world routes of antigen-
+  presentation loss in lung cancer are **genomic and proteomic** — allele-specific **HLA loss
+  of heterozygosity** [7] and **B2M** truncating mutation [8] — and are invisible to an
+  expression microarray, which measures only transcript abundance (the remaining allele is
+  still transcribed; a mutated transcript is still counted).
+- **Weak effector signal.** With CD8A flat and no coordinated interferon signature, this looks
+  closer to an immune-excluded ("cold") phenotype than an inflamed one; escape here, if
+  present, is more plausibly immune exclusion or antigen-specific/genomic than transcriptional
+  MHC-I silencing.
+The honest conclusion is a **complex negative**: the antigen-presentation machinery is
+transcriptionally intact at the bulk level, the measurable immune signal is macrophage- rather
+than T-cell-driven, and the mechanisms most relevant to neoantigen presentation cannot be
+resolved with this data type. Answering the question requires single-cell / tumor-cell-
+resolved expression to separate tumor from stroma, and paired genomic HLA-typing and
+mutation-calling (ideally multi-region, so a loss event can be placed as clonal/early vs
+subclonal/late) to detect the HLA-LOH and B2M routes that expression cannot see — the
+direction this project builds toward.
+
 ## How to reproduce
 
 ```bash
@@ -78,6 +183,17 @@ This project is a methods demonstration and reproduction, **not** a claim of nov
 - **Cell-composition confounding.** Strong down-regulation of lung-specific genes (e.g. *SFTPC*, *AGER*) may partly reflect differences in cell-type composition between tumor and normal tissue (fewer alveolar cells in tumor), rather than per-cell transcriptional changes. The same caveat applies to the macrophage-derived up-regulated genes noted above. Bulk expression data cannot distinguish these possibilities.
 - **One probe per gene.** For multi-probe genes, only the highest-expressed probe was retained; multi-gene probes were dropped.
 - **Statistical vs biological significance.** With n = 107, many very small differences reach statistical significance; effect-size filtering (fold change > 1.5), not p-value alone, does the real work of selecting meaningful genes.
+- **The antigen-presentation panel is platform-limited.** NLRC5 (the master MHC-I
+  transactivator) and CD68 are not annotated on HG-U133A, so the panel is incomplete on both
+  the regulatory and the macrophage-marker sides.
+- **HLA class I probes cross-hybridise.** The only HG-U133A probe sets for HLA-A/B/C are
+  Affymetrix `_x_at` sets, flagged for cross-hybridisation; because HLA-A/B/C are highly
+  homologous, their individual values are unreliable and cannot be cleanly separated from one
+  another.
+- **Expression cannot detect genomic/proteomic immune escape.** HLA loss of heterozygosity and
+  B2M mutation — routes that dominate immune evasion in lung adenocarcinoma — are undetectable
+  by expression microarray, so a "normal" MHC-I transcript profile does not exclude functional
+  loss of presentation.
 
 ## Future work
 
@@ -106,6 +222,9 @@ These extensions will be added to this repository as a second analysis stage.
 4. Matsubara E, Komohara Y, Esumi S, et al. SPP1 derived from macrophages is associated with a worse clinical course and chemo-resistance in lung adenocarcinoma. *Cancers (Basel)*. 2022;14(18):4374. doi:10.3390/cancers14184374.
 5. Lv FZ, Wang JL, Wu Y, Chen HF, Shen XY. Knockdown of MMP12 inhibits the growth and invasion of lung adenocarcinoma cells. *Int J Immunopathol Pharmacol*. 2015;28(1):77-84. doi:10.1177/0394632015572557. (See also reviews on the context-dependent, macrophage-derived roles of MMP12 in cancer.)
 6. Yi X, Luo L, Zhu Y, et al. SPP1 facilitates cell migration and invasion by targeting COL11A1 in lung adenocarcinoma. *Cancer Cell Int*. 2022;22:324. doi:10.1186/s12935-022-02749-x.
+7. McGranahan N, Rosenthal R, Hiley CT, et al. Allele-specific HLA loss and immune escape in lung cancer evolution. *Cell*. 2017;171(6):1259-1271.e11. doi:10.1016/j.cell.2017.10.001.
+8. Zaretsky JM, Garcia-Diaz A, Shin DS, et al. Mutations associated with acquired resistance to PD-1 blockade in melanoma. *N Engl J Med*. 2016;375(9):819-829. doi:10.1056/NEJMoa1604958.
+9. Meissner TB, Li A, Biswas A, et al. NLR family member NLRC5 is a transcriptional regulator of MHC class I genes. *Proc Natl Acad Sci USA*. 2010;107(31):13794-13799. doi:10.1073/pnas.1008684107.
 
 ## Acknowledgements
 
