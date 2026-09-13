@@ -231,3 +231,6 @@ These extensions will be added to this repository as a second analysis stage.
 Data from Landi MT, Dracheva T, Rotunno M, et al. *Gene expression signature of cigarette smoking and its role in lung adenocarcinoma development and survival.* PLoS ONE. 2008;3(2):e1651. doi:10.1371/journal.pone.0001651 (GEO: GSE10072).
 
 This repository is an independent reanalysis carried out for learning purposes.
+## Related work
+
+[hla-kinh-reanalysis](https://github.com/dkhoi2505/hla-kinh-reanalysis) — HLA class I typing from targeted amplicon data in a Vietnamese cohort, and the reference-construction limits that constrain it.
