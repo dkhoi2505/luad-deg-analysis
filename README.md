@@ -58,7 +58,7 @@ The mitotic cell-cycle genes *NEK2*, *TTK*, and *PRC1* - the headline signature 
  
 Building on the macrophage-infiltration observation above, this extension asks a focused,
 hypothesis-driven question in tumor immunology: **is the MHC class I antigen-presentation
-machinery — the pathway that displays tumor neoantigens to CD8+ T cells — transcriptionally
+machinery - the pathway that displays tumor neoantigens to CD8+ T cells - transcriptionally
 altered in these tumors?** Loss of this machinery is a canonical route of immune escape, so
 it is a natural thing to check. The analysis is a *targeted readout of a fixed gene panel*
 ([`antigen_presentation.ipynb`](notebooks/antigen_presentation.ipynb)), not a discovery
@@ -85,39 +85,39 @@ and immune cells, and immune cells themselves express high MHC-I).
  
 Two genes could not be assessed: **NLRC5** (the master transcriptional activator of MHC-I)
 and **CD68** (a macrophage marker) are not annotated on HG-U133A / were dropped during
-gene-level collapse — NLRC5's MHC-I role was characterised (~2010) after this 2003 platform
+gene-level collapse - NLRC5's MHC-I role was characterised (~2010) after this 2003 platform
 was designed.
  
 **No coordinated change of the presentation module.** None of the eleven measurable panel
 genes clears the significance threshold. The strongest evidence that nothing coordinated is
-happening is *per gene*: **every measurable gene has |log2FC| < 0.585** — no gene reaches the
+happening is *per gene*: **every measurable gene has |log2FC| < 0.585** - no gene reaches the
 1.5x effect-size bar, regardless of its p-value. Consistent with this, the panel does not
 shift as a group (mean log2FC +0.01, median +0.04; 6 up, 5 down; a sign test does not reject
-a 50/50 split, p = 1.0 — though with only eleven genes this test has low power and is a
+a 50/50 split, p = 1.0 - though with only eleven genes this test has low power and is a
 secondary check, not the primary evidence). The two genes with the strongest *statistical*
-signal are the interferon-γ transcription factors — **STAT1** (+0.51, p_adj 4e-5) and **IRF1**
-(-0.54, p_adj 2e-5) — but both fall just short of the effect-size bar and, tellingly, move in
+signal are the interferon-γ transcription factors - **STAT1** (+0.51, p_adj 4e-5) and **IRF1**
+(-0.54, p_adj 2e-5) - but both fall just short of the effect-size bar and, tellingly, move in
 **opposite** directions rather than as a coordinated interferon program; the IFN-inducible
 immunoproteasome subunits (PSMB8/PSMB9) are only trivially up. **B2M** reaches FDR
 significance but with a negligible effect (-0.20). At the bulk-tissue level there is **no
 evidence of MHC-I down-regulation** in this cohort.
  
-(Note that "mean ≈ 0" alone would be a weak claim — large opposite-sign effects can average
+(Note that "mean ≈ 0" alone would be a weak claim - large opposite-sign effects can average
 to zero. What licenses "no meaningful change" is the *per-gene* result that no single
 |log2FC| approaches the threshold.)
  
-**Reference genes** (immune infiltrate / tissue composition — *not* part of the presentation
+**Reference genes** (immune infiltrate / tissue composition - *not* part of the presentation
 panel; included only to interpret it).
  
 | Gene       | Role                          | log2FC | p_adj   | Reading                          |
 |------------|-------------------------------|-------:|--------:|----------------------------------|
-| CD8A       | Cytotoxic T cells             | -0.04  | 0.70    | flat (n.s.) — no CTL enrichment  |
-| PTPRC/CD45 | Pan-leukocyte                 | -0.66  | 1.4e-4  | lower — total leukocytes diluted |
+| CD8A       | Cytotoxic T cells             | -0.04  | 0.70    | flat (n.s.) - no CTL enrichment  |
+| PTPRC/CD45 | Pan-leukocyte                 | -0.66  | 1.4e-4  | lower - total leukocytes diluted |
 | SPP1       | Macrophage / TAM (proxy)      | +4.36  | 1.2e-35 | strongly up                      |
 | MMP12      | Macrophage (proxy)            | +2.38  | 2.6e-18 | strongly up                      |
 | MMP1       | Invasion / macrophage (proxy) | +2.86  | 1.7e-14 | strongly up                      |
  
-(CD68, the canonical macrophage marker, is not on this platform — hence the SPP1/MMP proxy.)
+(CD68, the canonical macrophage marker, is not on this platform - hence the SPP1/MMP proxy.)
  
 **Reading against immune infiltrate.** The reference genes argue against dismissing the flat
 panel as an infiltration artifact. The pan-leukocyte marker **PTPRC/CD45 is lower in tumor**
@@ -127,14 +127,14 @@ HLA/B2M). The lower PTPRC is best read as composition, not "less immune activity
 lung is leukocyte-rich, and tumor tissue dilutes that resident population as tumor cells take
 up volume. Meanwhile the macrophage-associated genes from the main analysis are strongly up
 (**SPP1 +4.36, MMP12 +2.38, MMP1 +2.86**; a proxy, since bulk data cannot prove which cells
-express them). The coherent reading is a **shift in immune composition** — loss of the
-leukocyte-rich normal-lung milieu, gain of a specific pro-tumor macrophage program — rather
+express them). The coherent reading is a **shift in immune composition** - loss of the
+leukocyte-rich normal-lung milieu, gain of a specific pro-tumor macrophage program - rather
 than a T-cell-inflamed, interferon-high state. This is consistent with, and extends, the
 macrophage-infiltration observation noted earlier.
  
 **Interpretation through the neoantigen / CD8 lens.** That the presentation machinery is
 transcriptionally intact means there is no evidence, at the tissue level, that these tumors
-have silenced their *capacity* to present neoantigens — a genuinely informative negative. But
+have silenced their *capacity* to present neoantigens - a genuinely informative negative. But
 it must be read with three hard limits, each of which is a reason bulk expression is the wrong
 tool for the neoantigen-presentation question:
  
@@ -142,8 +142,8 @@ tool for the neoantigen-presentation question:
   intrinsic HLA loss can be entirely masked in bulk by MHC-I-high non-tumor cells. "Bulk MHC-I
   preserved" therefore does **not** establish that tumor cells present neoantigens.
 - **mRNA != surface protein or function.** The dominant real-world routes of antigen-
-  presentation loss in lung cancer are **genomic and proteomic** — allele-specific **HLA loss
-  of heterozygosity** [7] and **B2M** truncating mutation [8] — and are invisible to an
+  presentation loss in lung cancer are **genomic and proteomic** - allele-specific **HLA loss
+  of heterozygosity** [7] and **B2M** truncating mutation [8] - and are invisible to an
   expression microarray, which measures only transcript abundance (the remaining allele is
   still transcribed; a mutated transcript is still counted).
 - **Weak effector signal.** With CD8A flat and no coordinated interferon signature, this looks
@@ -156,9 +156,50 @@ than T-cell-driven, and the mechanisms most relevant to neoantigen presentation 
 resolved with this data type. Answering the question requires single-cell / tumor-cell-
 resolved expression to separate tumor from stroma, and paired genomic HLA-typing and
 mutation-calling (ideally multi-region, so a loss event can be placed as clonal/early vs
-subclonal/late) to detect the HLA-LOH and B2M routes that expression cannot see — the
+subclonal/late) to detect the HLA-LOH and B2M routes that expression cannot see - the
 direction this project builds toward.
+## Paired re-analysis with limma
 
+### Motivation
+The initial analysis used an unpaired two-sample t-test (`ttest_ind`). However,
+GSE10072 contains 33 matched tumor–normal pairs from the same patients
+(patient IDs embedded in sample titles), making the samples non-independent.
+Treating paired samples as independent mis-estimates the variance. I re-analyzed
+the data with a paired design in limma (R) to test whether the original DEG list
+was robust to this design–data mismatch.
+
+### Data structure
+Of 74 patients: 33 with complete pairs, 25 tumor-only,
+16 normal-only (107 samples total). Because 38.3% of samples are
+unpaired, the primary model uses all samples with patient as a random effect.
+
+### Methods
+- **Primary model:** `lmFit` with `block = patient` and `duplicateCorrelation`
+  (consensus within-patient correlation = 0.221), on all 107 samples.
+- **Sensitivity model:** fixed-effect paired design `~ patient + tissue` on the
+  33 complete pairs (66 samples).
+- Probe→gene collapse and thresholds (FDR < 0.001 & |log2FC| > 0.585) kept
+  identical to the Python pipeline for a fair comparison.
+
+### Results
+- **Concordance with t-test:** logFC correlation r = 0.9998; DEG overlap
+  1438/1464 genes. The paired correction changed the DEG list only at the
+  margins, confirming the original result was **robust** to the design error.
+- **Positive controls preserved:** NEK2/TTK/PRC1 up, AGER down in all models.
+- **Antigen-presentation panel:** remained flat (0/11 in primary model). Only
+  IRF1 was borderline (logFC −0.55 to −0.60 across models, straddling the 0.585
+  cutoff) - a DEG status sensitive to analytic choice, not a robust finding.
+
+### Interpretation
+The unpaired t-test was the wrong tool for the data structure, but its practical
+impact here was small - within-patient correlation was modest (0.22) and the
+sample size large, so the null for the antigen-presentation panel held across
+three analyses (t-test, paired random-effect, paired fixed-effect).
+
+### Future directions
+STAT1/IRF1 showed statistically clear but biologically small IFN-γ-axis shifts
+(below the effect-size threshold). A larger paired cohort (e.g. TCGA-LUAD) would
+be needed to estimate these small effects precisely.
 ## How to reproduce
 
 ```bash
@@ -178,28 +219,20 @@ Then run **Kernel -> Restart Kernel and Run All Cells** to reproduce every resul
 
 This project is a methods demonstration and reproduction, **not** a claim of novel biomarker discovery. Several simplifications are worth stating explicitly:
 
-- **No confounder adjustment.** A simple t-test was used, whereas the original study used ANOVA adjusting for confounders (age, sex, smoking status). Because tumor/normal status is entangled with these variables, the unadjusted test likely inflates the number of significant genes.
-- **Paired design not exploited.** Tumor and normal samples were taken from the same patients, but an independent (unpaired) t-test was used, which is less statistically powerful than a paired approach.
 - **Cell-composition confounding.** Strong down-regulation of lung-specific genes (e.g. *SFTPC*, *AGER*) may partly reflect differences in cell-type composition between tumor and normal tissue (fewer alveolar cells in tumor), rather than per-cell transcriptional changes. The same caveat applies to the macrophage-derived up-regulated genes noted above. Bulk expression data cannot distinguish these possibilities.
 - **One probe per gene.** For multi-probe genes, only the highest-expressed probe was retained; multi-gene probes were dropped.
 - **Statistical vs biological significance.** With n = 107, many very small differences reach statistical significance; effect-size filtering (fold change > 1.5), not p-value alone, does the real work of selecting meaningful genes.
-- **The antigen-presentation panel is platform-limited.** NLRC5 (the master MHC-I
-  transactivator) and CD68 are not annotated on HG-U133A, so the panel is incomplete on both
-  the regulatory and the macrophage-marker sides.
-- **HLA class I probes cross-hybridise.** The only HG-U133A probe sets for HLA-A/B/C are
-  Affymetrix `_x_at` sets, flagged for cross-hybridisation; because HLA-A/B/C are highly
-  homologous, their individual values are unreliable and cannot be cleanly separated from one
-  another.
-- **Expression cannot detect genomic/proteomic immune escape.** HLA loss of heterozygosity and
-  B2M mutation — routes that dominate immune evasion in lung adenocarcinoma — are undetectable
-  by expression microarray, so a "normal" MHC-I transcript profile does not exclude functional
-  loss of presentation.
+- **The antigen-presentation panel is platform-limited.** NLRC5 (the master MHC-I transactivator) and CD68 are not annotated on HG-U133A, so the panel is incomplete on both the regulatory and the macrophage-marker sides.
+- **HLA class I probes cross-hybridise.** The only HG-U133A probe sets for HLA-A/B/C are Affymetrix `_x_at` sets, flagged for cross-hybridisation; because HLA-A/B/C are highly homologous, their individual values are unreliable and cannot be cleanly separated from one another.
+- **Expression cannot detect genomic/proteomic immune escape.** HLA loss of heterozygosity and B2M mutation - routes that dominate immune evasion in lung adenocarcinoma - are undetectable by expression microarray, so a "normal" MHC-I transcript profile does not exclude functional loss of presentation.
+- **Unpaired design (addressed).** The original pipeline used an unpaired test on paired data - addressed in the Paired re-analysis section above, which confirmed the DEG list was robust to it.
+- **Confounder adjustment (refined).** The original study used ANOVA adjusting for age, sex, and smoking. The initial pipeline treated this as the main gap; however, the paired re-analysis shows that within-patient comparison *intrinsically controls* these patient-level confounders (each patient is their own control), so explicit adjustment matters mainly for the unpaired samples and tumor-only cases. Note that ignoring the paired structure makes an unpaired test *lose* power (conservative), rather than inflate the gene count - consistent with the near-identical DEG counts (1461 vs 1464).
 
 ## Future work
 
-- **Confounder-adjusted model (R):** fit a multiple linear regression per gene (`expression ~ tumor + smoking + age + sex`) to isolate the tumor effect from clinical confounders - directly addressing the first limitation above.
-- **Diagnostic modelling (R):** logistic regression with ROC/AUC to assess how well candidate genes discriminate tumor from normal.
-- **Survival analysis (R):** Kaplan-Meier and Cox proportional-hazards models, if clinical outcome data can be linked.
+- **Confounder-adjusted model (R):** per-gene multiple regression (`expression ~ tumor + smoking + age + sex`) to handle the unpaired samples and tumor-only cases that the paired model excludes.
+- **Survival analysis (R):** Kaplan-Meier and Cox proportional-hazards models, if clinical outcome data can be linked (planned with a larger cohort such as TCGA-LUAD).
+- **Precise estimation of small IFN-γ-axis effects (STAT1/IRF1)** in a larger paired cohort, since their effect sizes sit near the significance threshold.
 
 These extensions will be added to this repository as a second analysis stage.
 

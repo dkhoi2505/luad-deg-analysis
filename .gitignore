@@ -6,3 +6,4 @@ GSE*
 __pycache__/
 *.pyc
 .DS_Store
+results/expression_matrix_log2.csv
