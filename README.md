@@ -1,6 +1,6 @@
 # Differential Expression Analysis of Lung Adenocarcinoma (GSE10072)
 
-A reproducible, from-scratch differential expression (DE) analysis comparing lung adenocarcinoma (LUAD) tumor tissue with normal lung tissue, using the public microarray dataset **GSE10072**. The pipeline independently reproduces the headline cell-cycle gene signature reported in the original study, and recovers a coherent biological picture of tumor dedifferentiation and proliferation.
+A reproducible, from-scratch differential expression (DE) analysis comparing lung adenocarcinoma (LUAD) tumor tissue with normal lung tissue, using the public microarray dataset **GSE10072**. The pipeline independently reproduces the headline cell-cycle gene signature reported in the original study, and recovers a coherent biological picture of tumor dedifferentiation and proliferation. It also includes a paired re-analysis in R (limma) that corrects an unpaired-test design-data mismatch (confirming the main results are robust), and a targeted MHC class I antigen-presentation panel.
 
 ## Question
 
@@ -196,24 +196,35 @@ impact here was small - within-patient correlation was modest (0.22) and the
 sample size large, so the null for the antigen-presentation panel held across
 three analyses (t-test, paired random-effect, paired fixed-effect).
 
-### Future directions
-STAT1/IRF1 showed statistically clear but biologically small IFN-γ-axis shifts
-(below the effect-size threshold). A larger paired cohort (e.g. TCGA-LUAD) would
-be needed to estimate these small effects precisely.
 ## How to reproduce
 
+The project has two stages: the original Python analysis, and a paired re-analysis in R.
+
+### Stage 1: Python analysis
+
 ```bash
-# 1. Create the environment
 conda env create -f environment.yml
 conda activate pybio
-
-# 2. Download the data (see data/README.md) into data/
-
-# 3. Run the notebook
-jupyter lab notebooks/luad_analysis.ipynb
+# Download the data (see data/README.md) into data/
+jupyter lab
 ```
 
-Then run **Kernel -> Restart Kernel and Run All Cells** to reproduce every result from scratch.
+Run these notebooks (Kernel -> Restart Kernel and Run All Cells):
+1. `notebooks/luad_analysis.ipynb` - differential expression and the main results.
+2. `notebooks/antigen_presentation.ipynb` - the MHC class I antigen-presentation panel.
+3. `notebooks/00_prepare_data_for_limma.ipynb` - exports the expression matrix and sample table for the R stage (writes `results/expression_matrix_log2.csv` and `results/sample_info.csv`).
+
+### Stage 2: Paired re-analysis in R
+
+```bash
+conda env create -f environment-r.yml
+conda activate rbio
+R -e "IRkernel::installspec(user = TRUE)"   # register the R kernel for Jupyter
+```
+
+Then open `notebooks/paired_limma_analysis.ipynb` with the R kernel and run all cells. It reads the two files produced in Stage 1, so run notebook 3 above first.
+
+Tested with R 4.5.3 and limma 3.66.0.
 
 ## Limitations
 
@@ -226,24 +237,29 @@ This project is a methods demonstration and reproduction, **not** a claim of nov
 - **HLA class I probes cross-hybridise.** The only HG-U133A probe sets for HLA-A/B/C are Affymetrix `_x_at` sets, flagged for cross-hybridisation; because HLA-A/B/C are highly homologous, their individual values are unreliable and cannot be cleanly separated from one another.
 - **Expression cannot detect genomic/proteomic immune escape.** HLA loss of heterozygosity and B2M mutation - routes that dominate immune evasion in lung adenocarcinoma - are undetectable by expression microarray, so a "normal" MHC-I transcript profile does not exclude functional loss of presentation.
 - **Unpaired design (addressed).** The original pipeline used an unpaired test on paired data - addressed in the Paired re-analysis section above, which confirmed the DEG list was robust to it.
-- **Confounder adjustment (refined).** The original study used ANOVA adjusting for age, sex, and smoking. The initial pipeline treated this as the main gap; however, the paired re-analysis shows that within-patient comparison *intrinsically controls* these patient-level confounders (each patient is their own control), so explicit adjustment matters mainly for the unpaired samples and tumor-only cases. Note that ignoring the paired structure makes an unpaired test *lose* power (conservative), rather than inflate the gene count - consistent with the near-identical DEG counts (1461 vs 1464).
+- **Confounder adjustment (refined).** The original study used ANOVA adjusting for age, sex, and smoking. The initial pipeline treated this as the main gap; however, the paired re-analysis shows that within-patient comparison *intrinsically controls* these patient-level confounders (each patient is their own control), so explicit adjustment matters mainly for the unpaired samples and tumor-only cases. The paired and unpaired analyses gave near-identical DEG lists (1461 vs 1464), but this comes from the thresholds, not the statistical model: at n = 107 the FDR filter is nearly non-binding (4,283 of 12,548 genes clear FDR < 0.001), so the gene list is set by the fold-change cutoff (only 19 of the 1,483 fold-change-passing genes are removed by FDR), and both models estimate fold change almost identically (r = 0.9998).
 
 ## Future work
 
-- **Confounder-adjusted model (R):** per-gene multiple regression (`expression ~ tumor + smoking + age + sex`) to handle the unpaired samples and tumor-only cases that the paired model excludes.
+- **Confounder-adjusted model (R):** add the patient-level covariates to the primary random-effect design (~ tissue + smoking + age + sex, block = patient). Because these covariates are constant within a patient, they affect only the contribution of the unpaired samples, where tumor status is not controlled within-patient.
 - **Survival analysis (R):** Kaplan-Meier and Cox proportional-hazards models, if clinical outcome data can be linked (planned with a larger cohort such as TCGA-LUAD).
-- **Precise estimation of small IFN-γ-axis effects (STAT1/IRF1)** in a larger paired cohort, since their effect sizes sit near the significance threshold.
+- **Precise estimation of small IFN-γ-axis effects (STAT1/IRF1)** in a larger paired cohort. Both are highly significant but fall just below the fold-change cutoff, so a larger sample is needed to estimate their effect sizes precisely.
 
 These extensions will be added to this repository as a second analysis stage.
 
 ## Repository structure
 
 ```
-├── notebooks/luad_analysis.ipynb   # full Python analysis
-├── figures/                        # volcano plot (PNG + PDF)
-├── results/                        # DEG tables (CSV)
-├── data/README.md                  # data download instructions
-├── environment.yml                 # conda environment
+├── notebooks/
+│   ├── luad_analysis.ipynb              # Python: differential expression (main)
+│   ├── antigen_presentation.ipynb       # Python: MHC-I antigen-presentation panel
+│   ├── 00_prepare_data_for_limma.ipynb  # Python: export matrix + sample table for R
+│   └── paired_limma_analysis.ipynb      # R: paired re-analysis with limma
+├── figures/                             # volcano plot (PNG + PDF)
+├── results/                             # DEG tables and panel results (CSV)
+├── data/README.md                       # data download instructions
+├── environment.yml                      # conda environment (Python)
+├── environment-r.yml                    # conda environment (R + limma)
 └── .gitignore
 ```
 

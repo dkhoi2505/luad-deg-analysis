@@ -1,0 +1,10 @@
+name: rbio
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - bioconductor-limma=3.66
+  - r-base=4.5
+  - r-irkernel
+  - r-statmod
+  - jupyter_client
