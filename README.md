@@ -80,12 +80,12 @@ and immune cells, and immune cells themselves express high MHC-I).
 | TAPBP | Peptide loading     | +0.10  | 0.31   | no                                  |
 | PSMB8 | Immunoproteasome    | +0.25  | 0.028  | no                                  |
 | PSMB9 | Immunoproteasome    | +0.04  | 0.83   | no                                  |
-| IRF1  | IFN-γ regulator     | -0.54  | 1.5e-5 | no (passes FDR, fails effect size)  |
-| STAT1 | IFN-γ regulator     | +0.51  | 4.1e-5 | no (passes FDR, fails effect size)  |
+| IRF1  | IFN-gamma regulator     | -0.54  | 1.5e-5 | no (passes FDR, fails effect size)  |
+| STAT1 | IFN-gamma regulator     | +0.51  | 4.1e-5 | no (passes FDR, fails effect size)  |
  
 Two genes could not be assessed: **NLRC5** (the master transcriptional activator of MHC-I)
 and **CD68** (a macrophage marker) are not annotated on HG-U133A / were dropped during
-gene-level collapse - NLRC5's MHC-I role was characterised (~2010) after this 2003 platform
+gene-level collapse - NLRC5's MHC-I role was characterised in 2010 [9], after this 2003 platform
 was designed.
  
 **No coordinated change of the presentation module.** None of the eleven measurable panel
@@ -95,14 +95,14 @@ happening is *per gene*: **every measurable gene has |log2FC| < 0.585** - no gen
 shift as a group (mean log2FC +0.01, median +0.04; 6 up, 5 down; a sign test does not reject
 a 50/50 split, p = 1.0 - though with only eleven genes this test has low power and is a
 secondary check, not the primary evidence). The two genes with the strongest *statistical*
-signal are the interferon-γ transcription factors - **STAT1** (+0.51, p_adj 4e-5) and **IRF1**
+signal are the interferon-gamma transcription factors - **STAT1** (+0.51, p_adj 4e-5) and **IRF1**
 (-0.54, p_adj 2e-5) - but both fall just short of the effect-size bar and, tellingly, move in
 **opposite** directions rather than as a coordinated interferon program; the IFN-inducible
 immunoproteasome subunits (PSMB8/PSMB9) are only trivially up. **B2M** reaches FDR
 significance but with a negligible effect (-0.20). At the bulk-tissue level there is **no
 evidence of MHC-I down-regulation** in this cohort.
  
-(Note that "mean ≈ 0" alone would be a weak claim - large opposite-sign effects can average
+(Note that "mean ~ 0" alone would be a weak claim - large opposite-sign effects can average
 to zero. What licenses "no meaningful change" is the *per-gene* result that no single
 |log2FC| approaches the threshold.)
  
@@ -150,6 +150,7 @@ tool for the neoantigen-presentation question:
   closer to an immune-excluded ("cold") phenotype than an inflamed one; escape here, if
   present, is more plausibly immune exclusion or antigen-specific/genomic than transcriptional
   MHC-I silencing.
+  
 The honest conclusion is a **complex negative**: the antigen-presentation machinery is
 transcriptionally intact at the bulk level, the measurable immune signal is macrophage- rather
 than T-cell-driven, and the mechanisms most relevant to neoantigen presentation cannot be
@@ -162,11 +163,11 @@ direction this project builds toward.
 
 ### Motivation
 The initial analysis used an unpaired two-sample t-test (`ttest_ind`). However,
-GSE10072 contains 33 matched tumor–normal pairs from the same patients
+GSE10072 contains 33 matched tumor-normal pairs from the same patients
 (patient IDs embedded in sample titles), making the samples non-independent.
 Treating paired samples as independent mis-estimates the variance. I re-analyzed
 the data with a paired design in limma (R) to test whether the original DEG list
-was robust to this design–data mismatch.
+was robust to this design-data mismatch.
 
 ### Data structure
 Of 74 patients: 33 with complete pairs, 25 tumor-only,
@@ -178,7 +179,7 @@ unpaired, the primary model uses all samples with patient as a random effect.
   (consensus within-patient correlation = 0.221), on all 107 samples.
 - **Sensitivity model:** fixed-effect paired design `~ patient + tissue` on the
   33 complete pairs (66 samples).
-- Probe→gene collapse and thresholds (FDR < 0.001 & |log2FC| > 0.585) kept
+- Probe-to-gene collapse and thresholds (FDR < 0.001 & |log2FC| > 0.585) kept
   identical to the Python pipeline for a fair comparison.
 
 ### Results
@@ -187,7 +188,7 @@ unpaired, the primary model uses all samples with patient as a random effect.
   margins, confirming the original result was **robust** to the design error.
 - **Positive controls preserved:** NEK2/TTK/PRC1 up, AGER down in all models.
 - **Antigen-presentation panel:** remained flat (0/11 in primary model). Only
-  IRF1 was borderline (logFC −0.55 to −0.60 across models, straddling the 0.585
+  IRF1 was borderline (logFC -0.55 to -0.60 across models, straddling the 0.585
   cutoff) - a DEG status sensitive to analytic choice, not a robust finding.
 
 ### Interpretation
@@ -243,24 +244,24 @@ This project is a methods demonstration and reproduction, **not** a claim of nov
 
 - **Confounder-adjusted model (R):** add the patient-level covariates to the primary random-effect design (~ tissue + smoking + age + sex, block = patient). Because these covariates are constant within a patient, they affect only the contribution of the unpaired samples, where tumor status is not controlled within-patient.
 - **Survival analysis (R):** Kaplan-Meier and Cox proportional-hazards models, if clinical outcome data can be linked (planned with a larger cohort such as TCGA-LUAD).
-- **Precise estimation of small IFN-γ-axis effects (STAT1/IRF1)** in a larger paired cohort. Both are highly significant but fall just below the fold-change cutoff, so a larger sample is needed to estimate their effect sizes precisely.
+- **Precise estimation of small IFN-gamma-axis effects (STAT1/IRF1)** in a larger paired cohort. Both are highly significant but fall just below the fold-change cutoff, so a larger sample is needed to estimate their effect sizes precisely.
 
 These extensions will be added to this repository as a second analysis stage.
 
 ## Repository structure
 
 ```
-├── notebooks/
-│   ├── luad_analysis.ipynb              # Python: differential expression (main)
-│   ├── antigen_presentation.ipynb       # Python: MHC-I antigen-presentation panel
-│   ├── 00_prepare_data_for_limma.ipynb  # Python: export matrix + sample table for R
-│   └── paired_limma_analysis.ipynb      # R: paired re-analysis with limma
-├── figures/                             # volcano plot (PNG + PDF)
-├── results/                             # DEG tables and panel results (CSV)
-├── data/README.md                       # data download instructions
-├── environment.yml                      # conda environment (Python)
-├── environment-r.yml                    # conda environment (R + limma)
-└── .gitignore
+|-- notebooks/
+|   |-- luad_analysis.ipynb              # Python: differential expression (main)
+|   |-- antigen_presentation.ipynb       # Python: MHC-I antigen-presentation panel
+|   |-- 00_prepare_data_for_limma.ipynb  # Python: export matrix + sample table for R
+|   `-- paired_limma_analysis.ipynb      # R: paired re-analysis with limma
+|-- figures/                             # volcano plot (PNG + PDF)
+|-- results/                             # DEG tables and panel results (CSV)
+|-- data/README.md                       # data download instructions
+|-- environment.yml                      # conda environment (Python)
+|-- environment-r.yml                    # conda environment (R + limma)
+`-- .gitignore
 ```
 
 ## References
@@ -283,4 +284,4 @@ This repository is an independent reanalysis carried out for learning purposes.
 
 ## Related work
 
-[hla-kinh-reanalysis](https://github.com/dkhoi2505/hla-kinh-reanalysis) — HLA class I typing from targeted amplicon data in a Vietnamese cohort, and the reference-construction limits that constrain it.
+[hla-kinh-reanalysis](https://github.com/dkhoi2505/hla-kinh-reanalysis): HLA class I typing from targeted amplicon data in a Vietnamese cohort, and the reference-construction limits that constrain it.
