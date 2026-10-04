@@ -222,6 +222,7 @@ conda env create -f environment-r.yml
 conda activate rbio
 R -e "IRkernel::installspec(user = TRUE)"   # register the R kernel for Jupyter
 ```
+The rbio environment does not include JupyterLab, so start Jupyter from the Stage 1 environment (`conda activate pybio`, then `jupyter lab`). The R kernel registered above will show up in the kernel list.
 
 Then open `notebooks/paired_limma_analysis.ipynb` with the R kernel and run all cells. It reads the two files produced in Stage 1, so run notebook 3 above first.
 
@@ -238,7 +239,7 @@ This project is a methods demonstration and reproduction, **not** a claim of nov
 - **HLA class I probes cross-hybridise.** The only HG-U133A probe sets for HLA-A/B/C are Affymetrix `_x_at` sets, flagged for cross-hybridisation; because HLA-A/B/C are highly homologous, their individual values are unreliable and cannot be cleanly separated from one another.
 - **Expression cannot detect genomic/proteomic immune escape.** HLA loss of heterozygosity and B2M mutation - routes that dominate immune evasion in lung adenocarcinoma - are undetectable by expression microarray, so a "normal" MHC-I transcript profile does not exclude functional loss of presentation.
 - **Unpaired design (addressed).** The original pipeline used an unpaired test on paired data - addressed in the Paired re-analysis section above, which confirmed the DEG list was robust to it.
-- **Confounder adjustment (refined).** The original study used ANOVA adjusting for age, sex, and smoking. The initial pipeline treated this as the main gap; however, the paired re-analysis shows that within-patient comparison *intrinsically controls* these patient-level confounders (each patient is their own control), so explicit adjustment matters mainly for the unpaired samples and tumor-only cases. The paired and unpaired analyses gave near-identical DEG lists (1461 vs 1464), but this comes from the thresholds, not the statistical model: at n = 107 the FDR filter is nearly non-binding (4,283 of 12,548 genes clear FDR < 0.001), so the gene list is set by the fold-change cutoff (only 19 of the 1,483 fold-change-passing genes are removed by FDR), and both models estimate fold change almost identically (r = 0.9998).
+- **Confounder adjustment (refined).** The original study used ANOVA adjusting for age, sex, and smoking. The initial pipeline treated this as the main gap; however, the paired re-analysis shows that within-patient comparison *intrinsically controls* these patient-level confounders (each patient is their own control), so explicit adjustment matters mainly for the unpaired samples and tumor-only cases. The paired and unpaired analyses gave near-identical DEG lists (1461 vs 1464), but this comes from the thresholds, not the statistical model: at n = 107 the FDR filter is nearly non-binding (t-test: 4,283 of 12,548 genes clear FDR < 0.001; limma: 4,713), so the gene list is set by the fold-change cutoff (FDR removes only 19 of the 1,483 fold-change-passing genes in the t-test, and 11 of 1,472 in limma), and both models estimate fold change almost identically (r = 0.9998). The paired model passes more genes at FDR < 0.001, as expected when within-patient correlation is used, but the gain cannot be attributed to pairing alone because the test also changed (moderated vs ordinary t).
 
 ## Future work
 
